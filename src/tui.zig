@@ -90,52 +90,59 @@ pub const Model = struct {
     }
 
     pub fn view(self: *Model, ctx: *const zz.Context) []const u8 {
-        // Modal
-        if (self.modal.isVisible()) {
-            return self.modal.viewWithBackdrop(ctx.allocator, ctx.width, ctx.height) catch "Error";
-        }
-
-        // Layout
+        const max_width: u16 = @intCast(self.max_width);
         const w: u16 = @intCast(@min(ctx.width, std.math.maxInt(u16)));
         const h: u16 = @intCast(@min(ctx.height, std.math.maxInt(u16)));
-        const max_width: u16 = @intCast(self.max_width);
+        if (w < 70 or h < 15) {
+            const content = std.fmt.allocPrint(
+                ctx.allocator,
+                "Window must have at least 70x15 px.",
+                .{},
+            ) catch "Error!";
+            return zz.place.place(ctx.allocator, w, h, .center, .middle, content) catch "Error!";
+        } else {
+            // Modal
+            if (self.modal.isVisible()) {
+                return self.modal.viewWithBackdrop(ctx.allocator, ctx.width, ctx.height) catch "Error";
+            }
 
-        // zmenu Title
-        var t_style = (zz.Style{})
-            .width(max_width)
-            .fg(zz.Color.white)
-            .inline_style(true)
-            .alignH(.center);
+            // zmenu Title
+            var t_style = (zz.Style{})
+                .width(max_width)
+                .fg(zz.Color.white)
+                .inline_style(true)
+                .alignH(.center);
 
-        const title = t_style.render(ctx.allocator, "zmenu") catch "zmenu";
-        const centered_title = zz.layout.placeCenter(ctx.allocator, w, 1, title) catch title;
+            const title = t_style.render(ctx.allocator, "zmenu") catch "zmenu";
+            const centered_title = zz.layout.placeCenter(ctx.allocator, w, 1, title) catch title;
 
-        // Search bar
-        const search_bar = self.search_bar.view(ctx.allocator) catch "Error";
-        const sb_box = (zz.Style{})
-            .paddingLeft(2)
-            .paddingRight(2)
-            .width(max_width)
-            .marginLeft((w - max_width) / 2 - 1)
-            .marginRight((w - max_width) / 2 - 1);
-        const sb_view = sb_box.render(ctx.allocator, search_bar) catch "Error";
+            // Search bar
+            const search_bar = self.search_bar.view(ctx.allocator) catch "Error";
+            const sb_box = (zz.Style{})
+                .paddingLeft(2)
+                .paddingRight(2)
+                .width(max_width)
+                .marginLeft((w - max_width) / 2 - 1)
+                .marginRight((w - max_width) / 2 - 1);
+            const sb_view = sb_box.render(ctx.allocator, search_bar) catch "Error";
 
-        // Result list
-        const result_list = self.result_list.view(ctx.allocator) catch "Error";
-        const rl_box = (zz.Style{})
-            .maxWidth(max_width)
-            .marginLeft((w - max_width) / 2 - 1)
-            .marginRight((w - max_width) / 2 - 1);
-        const rl_view = rl_box.render(ctx.allocator, result_list) catch "Error";
+            // Result list
+            const result_list = self.result_list.view(ctx.allocator) catch "Error";
+            const rl_box = (zz.Style{})
+                .maxWidth(max_width)
+                .marginLeft((w - max_width) / 2 - 1)
+                .marginRight((w - max_width) / 2 - 1);
+            const rl_view = rl_box.render(ctx.allocator, result_list) catch "Error";
 
-        // Join everything
-        const content = std.fmt.allocPrint(
-            ctx.allocator,
-            "{s}\n\n{s}\n{s}",
-            .{ centered_title, sb_view, rl_view },
-        ) catch "Error!";
+            // Join everything
+            const content = std.fmt.allocPrint(
+                ctx.allocator,
+                "{s}\n\n{s}\n{s}",
+                .{ centered_title, sb_view, rl_view },
+            ) catch "Error!";
 
-        return zz.place.place(ctx.allocator, w, h, .center, .middle, content) catch "Error!";
+            return zz.place.place(ctx.allocator, w, h, .center, .middle, content) catch "Error!";
+        }
     }
 
     pub fn deinit(self: *Model) void {
