@@ -1,6 +1,6 @@
 .{
     .name = .zmenu,
-    .version = "0.1.0",
+    .version = "1.0.0",
     // When forking a Zig project, this id should be regenerated (delete the
     // field and run `zig build`) if the upstream project is still maintained.
     // Otherwise, the fork is *hostile*, attempting to take control over the
@@ -9,8 +9,8 @@
     // modify the field.
     .dependencies = .{
         .zigzag = .{
-            .url = "git+https://github.com/meszmate/zigzag?ref=main#1187d164073cbab1965476cbc9ebd31d3d2460aa",
-            .hash = "zigzag-0.1.2-YXwYS73qEQD51GHfONVN8Bas1RpyN2y5P2DLuLQUAhRZ",
+            .url = "git+https://github.com/meszmate/zigzag?ref=main#0a09aa484719a5257cb87dd0f09b4f7e81adcd5b",
+            .hash = "zigzag-0.1.6-YXwYS7UBEwAOOl0w7ju033G2mqu034VzFPp3eMoQJukY",
         },
         .uni = .{
             .url = "git+https://github.com/menosbits/uni#99cecad287b38e26bdddbf883c495b3e4bfe3904",
